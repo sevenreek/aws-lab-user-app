@@ -6,8 +6,8 @@ sudo apt install pipenv -y
 sudo pip3 install gdown
 gdown https://drive.google.com/uc?id=1_XviDEPYYfRxKrEWehCQdAEkX4zvjE6D
 mv .env user_app/.env
-pipenv install
+sudo pipenv install --system
 mkdir ~/.aws/
 echo [default] >> ~/.aws/credentials
 cat .env ~/.aws/credentials
-pipenv run python3 manage.py runserver
+sudo python3 manage.py runserver 0.0.0.0:80
