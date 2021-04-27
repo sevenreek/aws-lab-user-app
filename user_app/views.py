@@ -9,8 +9,7 @@ def list_images(request):
     s3 = boto3.resource('s3', 
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
         aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY,
-        aws_session_token=settings.AWS_SESSION_TOKEN,
-        aws_default_region=settings.AWS_DEFAULT_REGION
+        aws_session_token=settings.AWS_SESSION_TOKEN
     )
     my_bucket = s3.Bucket(
         settings.AWS_BUCKET_NAME
@@ -38,8 +37,7 @@ def request_process(request):
         sqs = boto3.resource('sqs', 
             aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
             aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY,
-            aws_session_token=settings.AWS_SESSION_TOKEN,
-            aws_default_region=settings.AWS_DEFAULT_REGION
+            aws_session_token=settings.AWS_SESSION_TOKEN
         )
         # Get the queue. This returns an SQS.Queue instance
         try:
