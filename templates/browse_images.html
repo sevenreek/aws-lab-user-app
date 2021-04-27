@@ -1,0 +1,62 @@
+{% extends '_base.html' %}
+{% load static %}
+{% block title %}Images Processing App{% endblock title %}
+{% block inhead %}
+<link rel="stylesheet" href="{% static 'css/browse_images.css' %}">
+{% endblock inhead %}
+
+{% block content %}
+    <div class='images-container'>
+    <!--
+        <div class='aws-image'>
+            <a href=""><img src="https://via.placeholder.com/200x400"></img></a>
+        </div>
+        -->
+    {% for image in images %}
+        <div class='aws-image'>
+            <a onclick="openImageRequest('{{ image.name }}')"><img src="{{ bucket_url }}{{ image.thumb }}"></img></a>
+        </div>
+    {% endfor %}
+    </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Process image</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <img id="request-image" class="modal-image" src="https://via.placeholder.com/400x400"></img>
+          <form action="{% url 'request_process' %}" method="post" id='request-form'>
+            {% csrf_token %}
+            <label for="source-file-name">Source file:</label><br>
+            <input class="form-control" type="text" id="source-file-name" name="source-file-name" readonly="readonly" ><br>
+            <label for="destination-file-name">Destination file:</label><br>
+            <input class="form-control" type="text" id="destination-file-name" name="destination-file-name"><br>
+            <label for="image-processor-type">Image processor:</label><br>
+            <select class="form-select form-select-lg" name="image-processor-type" id="image-processor-type">
+              <option value="invert">Invert</option>
+              <option value="grayscale">Grayscale</option>
+            </select>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button onclick="sendRequest()" type="submit" form="request-form"  class="btn btn-success" data-dismiss="modal">Queue process</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+{% endblock content %}
+{% block scripts %}
+<script>
+const AWS_BUCKET_URL = '{{ bucket_url }}';
+</script>
+<script src="{% static 'js/browse_images.js' %}"></script>
+
+{% endblock scripts %}
