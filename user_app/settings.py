@@ -132,11 +132,11 @@ STATICFILES_DIRS = (
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # AWS
-AWS_QUEUE_NAME  = env('AWS_QUEUE_NAME')
-AWS_BUCKET_NAME = env('AWS_BUCKET_NAME')
-AWS_THUMBS_DIR  = env('AWS_THUMBS_DIR')
+AWS_QUEUE_NAME  = env('aws_queue_name')
+AWS_BUCKET_NAME = env('aws_bucket_name')
+AWS_THUMBS_DIR  = env('aws_thumbs_dir')
 
-AWS_ACCESS_KEY_ID     = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_SESSION_TOKEN     = env('AWS_SESSION_TOKEN')
-AWS_DEFAULT_REGION    = env('AWS_DEFAULT_REGION')
+AWS_ACCESS_KEY_ID     = env('aws_access_key_id')
+AWS_SECRET_ACCESS_KEY = env('aws_secret_access_key')
+AWS_SESSION_TOKEN     = env('aws_session_token')
+AWS_DEFAULT_REGION    = env('aws_default_region')

@@ -1,0 +1,13 @@
+sudo apt update
+git clone https://github.com/sevenreek/aws-lab-user-app
+cd aws-lab-user-app
+sudo apt install python3.9 -y
+sudo apt install pipenv -y
+sudo pip3 install gdown
+gdown https://drive.google.com/uc?id=1_XviDEPYYfRxKrEWehCQdAEkX4zvjE6D
+mv .env user_app/.env
+pipenv install
+mkdir ~/.aws/
+echo [default] >> ~/.aws/credentials
+cat .env ~/.aws/credentials
+pipenv run python3 manage.py runserver
