@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import boto3
 from django.conf import settings
 from traceback import print_exc
@@ -24,28 +24,64 @@ def list_images(request):
     })
 
 def request_process(request):
-    if request.method == 'POST':
-        source_file = request.POST.get('source-file-name')
-        destination_file = request.POST.get('destination-file-name')
-        processor = request.POST.get('image-processor-type')
-        print(source_file, destination_file, processor)
-        mbody = {
-            'filename':source_file,
-            'destination':destination_file,
-            'process': processor
-        }
-        sqs = boto3.resource('sqs', 
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY,
-            aws_session_token=settings.AWS_SESSION_TOKEN,
-            region_name=settings.AWS_DEFAULT_REGION
-        )
-        # Get the queue. This returns an SQS.Queue instance
-        try:
-            queue = sqs.get_queue_by_name(QueueName=settings.AWS_QUEUE_NAME)
-            queue.send_message(MessageBody=json.dumps(mbody))
-        except:
-            print_exc()
-            print("Queue does not exist")
+    if request.method != 'POST':
+        return HttpResponse(status=405)
 
-    return redirect('browse')
+    data = json.loads(request.body)
+    source_files = data['source-file-names']
+    processor = data['image-processor-type']
+    print(source_files, processor)
+    for begin in range(0, len(source_files), 10):
+        end = min(len(source_files), begin+10)
+        messages = [
+            {
+                'Id':str(i), 
+                'MessageBody':json.dumps(
+                    {
+                        'filename':str(image),
+                        'destination':str(processor)+str(image),
+                        'process':str(processor),
+                    }
+                )
+            } for i, image in enumerate(source_files)
+        ]
+    sqs = boto3.resource('sqs', 
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY,
+        aws_session_token=settings.AWS_SESSION_TOKEN,
+        region_name=settings.AWS_DEFAULT_REGION
+    )
+    # Get the queue. This returns an SQS.Queue instance
+    try:
+        queue = sqs.get_queue_by_name(QueueName=settings.AWS_QUEUE_NAME)
+        queue.send_messages(Entries=messages)
+        return HttpResponse(status=202)
+    except:
+        print_exc()
+        print("Queue does not exist")
+        return HttpResponse(status=500)
+
+
+
+
+    
+def request_upload(request):
+    s3 = boto3.client('s3', 
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key= settings.AWS_SECRET_ACCESS_KEY,
+        aws_session_token=settings.AWS_SESSION_TOKEN,
+        region_name=settings.AWS_DEFAULT_REGION
+    )
+    data = s3.generate_presigned_post(
+        settings.AWS_BUCKET_NAME, 
+        '${filename}',
+        Fields={"acl": "public-read", "success_action_status":'201'},
+        Conditions=[{'acl':"public-read"}],
+        ExpiresIn=300
+    )
+    return JsonResponse(
+        {
+            'url':data['url'],
+            'fields':data['fields']
+        }
+    )

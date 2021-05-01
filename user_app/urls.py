@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.list_images, name='browse'),
     path('request', views.request_process, name='request_process'),
+    path('upload', views.request_upload, name='request_upload'),
 ]

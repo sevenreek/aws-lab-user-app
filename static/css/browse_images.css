@@ -1,4 +1,5 @@
 .images-container {
+    counter-reset: fabs;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -6,9 +7,13 @@
 
 .aws-image {
     margin: 1rem;
-    width: 15rem;
-    height: 15rem;
+    width: 128px;
+    height: 128px;
     transition: all .2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
 .aws-image:hover {
@@ -16,9 +21,40 @@
 }
 
 .aws-image img {
-    height: 100%;
-    width: 100%;
-    object-fit: contain;
+    margin: auto;
+    display: block;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.aws-image.selected a {
+    border-style: solid;
+    border-color: #2978d3;
+    border-width: 0.25em;
+    position: relative;
+}
+
+.aws-image.selected img {
+    opacity: 0.8;
+}
+
+.aws-image a {
+    position: relative;
+}
+
+.aws-image.selected>a:before {
+    font-family: FontAwesome;
+    color: #2978d3;
+    content: "\f00c";
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 10%;
+    height: 10%;
+    z-index: 100;
+    font-weight: 900px;
 }
 
 .aws-image:hover {
@@ -29,4 +65,43 @@
     max-height: 20vh;
     width: 100%;
     object-fit: contain;
+}
+
+.fab-container {
+    display: inline-flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+}
+
+.fab-outer {
+    margin-top: 0.5em;
+    width: 64px;
+    height: 64px;
+    outline: none;
+}
+
+.fab {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    border: 0;
+    border-radius: 50%;
+    background-color: #2978d3;
+    color: #fff;
+}
+
+.fab:hover {
+    outline: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: hsl(212, 67%, 40%);
+    color: #fff;
+    cursor: pointer;
+}
+
+.fab:focus,
+.fab-outer:focus {
+    outline: 0 !important;
 }
